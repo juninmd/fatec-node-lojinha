@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
+const fs = require('fs');
+const bodyParser = require('body-parser');
 
+app.use(bodyParser.json({ limit: '1mb' }));
 app.use(require('cors')());
 app.use(express.static(__dirname));
 
@@ -23,6 +26,15 @@ app.get("/products/", (req, res, next) => {
             "preco": "3600",
         }
     ]);
+})
+
+app.put("/message", (req, res, next) => {
+    try {
+        fs.writeFileSync('./texto.txt', JSON.stringify(req.body));
+        return res.status(201).send({});
+    } catch (error) {
+        return res.status(500).send({ err: error.message });
+    }
 })
 
 app.listen(process.env.port || 8050, () => {
